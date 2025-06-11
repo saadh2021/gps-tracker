@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPS Location Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>Location Tracker</h2>
+  <p>Click the button to share your current GPS location.</p>
+  <button onclick="getLocation()">📍 Get My Location</button>
+  <div id="status"></div>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById("status");
+
+      if (!navigator.geolocation) {
+        status.textContent = "Geolocation is not supported by your browser.";
+        return;
+      }
+
+      status.textContent = "Requesting location...";
+
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      document.getElementById("status").textContent = 
+        `Latitude: ${latitude}, Longitude: ${longitude} (±${accuracy} meters)`;
+
+      fetch("collect.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          accuracy,
+          timestamp: new Date().toISOString()
+        })
+      });
+    }
+
+    function error(err) {
+      document.getElementById("status").textContent = 
+        "Error: " + err.message;
+    }
+  </script>
+</body>
+</html>

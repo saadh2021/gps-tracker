@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=public_html/gps-tracker
+    - /bin/cp -r * $DEPLOYPATH
